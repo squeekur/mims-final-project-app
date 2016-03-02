@@ -43,6 +43,8 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <allow-navigation href="http://159.203.248.207:3000/*" />
+    <allow-navigation href="https://159.203.248.207:4000/*" />
     <allow-navigation href="*://*.http://159.203.248.207:3000/*" />
+    <allow-navigation href="*://*.https://159.203.248.207:4000/*" />
     <icon src="assets/emoticon.png" />
 </widget>

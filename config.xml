@@ -20,8 +20,10 @@
     <!--added to fix stupid error -->
     <!-- Allow links to http:159.203.248.207-->
     <allow-navigation href="http://159.203.248.207:3000/*" />
+    <allow-navigation href="https://159.203.248.207:4000/*" />
     <!-- Wildcards are allowed for the protocol, as a prefix to the host, or as a suffix to the path -->
     <allow-navigation href="*://*.http://159.203.248.207:3000/*" />
+    <allow-navigation href="*://*.https://159.203.248.207:4000/*" />
     <icon src="assets/emoticon.png" />
     <platform name="android">
         <allow-intent href="market:*" />
