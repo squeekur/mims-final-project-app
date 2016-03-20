@@ -51,6 +51,32 @@ var surveyQuestions = [
                                 {"label": "Very active"},
                                 ]
                        },
+                       /*3*/
+                       /*a "slider" item using a sliding rating scale. It only needs your question prompt and the minimum and
+                       maximum values of your sliding scale. ExperienceSampler will set the default value to be the midpoint*/
+                       {
+                       "type":"slider",
+                       "variableName": "pleasureDimensionSlider",
+                       "questionPrompt": "How are you feeling?",
+                       "minResponse": 0,
+                       "maxResponse": 100,
+                       "rightLable": "Very Active",
+                       "leftLable": "Very Inactive",
+                       
+                       },                                            
+                       /*4*/
+                       /*a "slider" item using a sliding rating scale. It only needs your question prompt and the minimum and
+                       maximum values of your sliding scale. ExperienceSampler will set the default value to be the midpoint*/
+                       {
+                       "type":"slider",
+                       "variableName": "arousalDimensionSlider",
+                       "questionPrompt": "How are you feeling?",
+                       "minResponse": 0,
+                       "maxResponse": 100,
+                       "rightLable": "Very Pleased",
+                       "leftLable": "Very Displeased",
+                       
+                       },
 
 ];
 
@@ -64,13 +90,13 @@ var lastPage = [
                 /*1*/
                 /*input snooze last-page message*/
                 {
-                "message": "That's cool! I'll notify you again in 10 minutes! Please close the application."
+                "message": "That's cool! I'll notify you again in 20 minutes!"
                 },
-                /*2*/
-                /*NOT NEEDED*/
-                {
-                "message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
-                }
+                ///*2*/
+                ///*NOT NEEDED*/
+                //{
+                //"message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
+                //}
                 ];
 
 /*Questions to set up participant notifications so that notifications are customized to participant's schedule*/ 
@@ -118,7 +144,11 @@ var buttonTmpl = "<li><button id='{{id}}' value='{{value}}'>{{label}}</button></
 var textTmpl = "<li><textarea cols=50 rows=5 id='{{id}}'></textarea></li><li><button type='submit' value='Enter'>Enter</button></li>";
 var checkListTmpl =  "<li><input type='checkbox' id='{{id}}' value='{{value}}'>{{label}}</input></li>";
 var instructionTmpl = "<li><button id='{{id}}' value = 'Next'>Next</button></li>";
-var sliderTmpl = "<li><input type='range' min='{{min}}' max='{{max}}' value='{{value}}' orient=vertical id='{{id}}' oninput='outputUpdate(value)'></input><output for='{{id}}' id='slider'>50</output><script>function outputUpdate(slidervalue){document.querySelector('#slider').value=slidervalue;}</script></li><li><button type='submit' value='Enter'>Enter</button></li>";
+var sliderTmpl = ('<li><input type="range" min="{{min}}" max="{{max}}" value="{{value}}" orient=horizontal'
+                  + 'id="{{id}}" oninput="outputUpdate(value)"></input><script>function outputUpdate(slidervalue)'
+                  + '{document.querySelector("#slider").value=slidervalue;}</script></li>'
+                  + '<div class="label-container"><div class="label">{{leftLable}}</div><div class="label">{{rightLable}}</div></div>'
+                  + '<li><button type="submit" value="Enter">Enter</button></li>');
 var datePickerTmpl = '<li><input id="{{id}}" data-format="DD-MM-YYYY" data-template="D MMM YYYY" name="date"><br /><br /></li><li><button type="submit" value="Enter">Enter</button></li><script>$(function(){$("input").combodate({firstItem: "name",minYear:2015, maxYear:2016});});</script>';
 var dateAndTimePickerTmpl = '<li><input id="{{id}}" data-format="DD-MM-YYYY-HH-mm" data-template="D MMM YYYY  HH:mm" name="datetime24"><br /><br /></li><li><button type="submit" value="Enter">Enter</button></li><script>$(function(){$("input").combodate({firstItem: "name",minYear:2015, maxYear:2016});});</script>';
 var timePickerTmpl = '<li><input id="{{id}}" data-format="HH:mm" data-template="HH : mm" name="time"><br /><br /></li><li><button type="submit" value="Enter">Enter</button></li><script>$(function(){$("input").combodate({firstItem: "name"});});</script>';
@@ -145,7 +175,7 @@ bindEvents: function() {
     document.addEventListener("deviceready", this.onDeviceReady, false);
     document.addEventListener("resume", this.onResume, false);
     document.addEventListener("pause", this.onPause, false);
-    //WHAT IS THIS FOR?
+    
     document.addEventListener("receivedLocalNotification", onReceivedLocalNotification, false);
 },
 
@@ -171,6 +201,7 @@ renderQuestion: function(question_index) {
     //Below is an example of how you would look for the NAME placeholder in your surveyQuestion questionPrompts 
     //and replace it with the response value that you assign to the name variable
     var questionPrompt = question.questionPrompt;
+    
 	if (questionPrompt.indexOf('NAME') >= 0) {
 		questionPrompt = questionPrompt.replace("NAME", function replacer() {return name;});
       	}
@@ -236,7 +267,14 @@ renderQuestion: function(question_index) {
             break;
         
         case 'slider':
-        	question.buttons = Mustache.render(sliderTmpl, {id: question.variableName+"1"}, {min: question.minResponse}, {max: question.maxResponse}, {value: (question.maxResponse)/2});
+            var leftLable = question.leftLable;
+            var rightLable = question.rightLable;
+        	question.buttons = Mustache.render(sliderTmpl, {
+                                              id: question.variableName+"1",
+                                              rightLable: question.rightLable,
+                                              leftLable: question.leftLable,
+                                              },
+                                              {min: question.minResponse}, {max: question.maxResponse}, {value: (question.maxResponse)/2});
         	$("#question").html(Mustache.render(questionTmpl, question)).fadeIn(400);
         	var slider = [];
         	$("#question ul li button").click(function(){
@@ -351,6 +389,7 @@ init: function() {
     /* Record User Responses */
 recordResponse: function(button, count, type) {
     //Record date (create new date object)
+    
     var datestamp = new Date();
     var year = datestamp.getFullYear(), month = datestamp.getMonth(), day=datestamp.getDate(), hours=datestamp.getHours(), minutes=datestamp.getMinutes(), seconds=datestamp.getSeconds();
     
@@ -409,7 +448,7 @@ recordResponse: function(button, count, type) {
     if (count == 6) {name = response;}
     
     if (count <= -1) {uniqueRecord = currentQuestion;}
-    else {uniqueRecord = uniqueKey + "_" + currentQuestion + "_" + year + "_" + month + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
+    else {uniqueRecord = uniqueKey + "_" + currentQuestion + "_" + year + "_" + (month-1) + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
    
     //Save this to local storage
     localStore[uniqueRecord] = response;
@@ -500,7 +539,7 @@ saveDataLastPage:function() {
             	localStore.participant_id = pid;
            		localStore.snoozed = snoozed;
            		localStore.uniqueKey = uniqueKey;
-           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey. Please close the application.</h3>");
+           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey</h3>");
            },
            error: function (request, error) {console.log(error);
                 $("#question").html("<h3>Please try resending data. If problems persist, please contact the researchers.</h3><br><button>Resend data</button>");
@@ -518,7 +557,7 @@ scheduleNotifs:function() {
 	//cordova.plugins.backgroundMode.enable();
     //Section 1 - Declaring necessary variables
     //Declares the number of intervals between the notifications for each day (i.e., if beeping participants 6 times, declare 6 intervals)
-   	var interval1, interval2, interval3, interval4, interval5, interval6, interval7
+   	var interval1, interval2, interval3, interval4//, interval5, interval6, interval7
     
 	//Declares a variable to represent the id of each notification for the day
  	//Declare as many letters as you have intervals (i.e., 6 intervals, declare 6 ids)
@@ -615,8 +654,8 @@ scheduleNotifs:function() {
    			interval2 = interval1 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
    			interval3 = interval2 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
    			interval4 = interval3 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval5 = interval4 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
-   			interval6 = interval5 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
+   			//interval5 = interval4 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
+   			//interval6 = interval5 + (parseInt(Math.round(Math.random()*randomDiaryLag)+minDiaryLag));
    			
             //NEEDED?
             dinnerInterval = parseInt(currentLag) + parseInt(maxInterval) + day*i;
@@ -626,32 +665,32 @@ scheduleNotifs:function() {
             b = 102+(parseInt(i)*100);
             c = 103+(parseInt(i)*100);
             d = 104+(parseInt(i)*100);
-            e = 105+(parseInt(i)*100);
-            f = 106+(parseInt(i)*100);
+            //e = 105+(parseInt(i)*100);
+            //f = 106+(parseInt(i)*100);
             
             //This part of the code calculates the time when the notification should be sent by adding the time interval to the current date and time  
         	date1 = new Date(now + interval1);
         	date2 = new Date(now + interval2);
         	date3 = new Date(now + interval3);
         	date4 = new Date(now + interval4);
-        	date5 = new Date(now + interval5);
-        	date6 = new Date(now + interval6);
+        	//date5 = new Date(now + interval5);
+        	//date6 = new Date(now + interval6);
         	
             //This part of the code schedules the notifications
         	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: a, at: date1, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
         	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: b, at: date2, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
         	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: c, at: date3, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
         	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: d, at: date4, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: e, at: date5, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
-        	cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: f, at: date6, text: 'Time for your next Mood Report!', title: 'Mood Survey'}); 
+        	//cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: e, at: date5, text: 'Time for your next Mood Report!', title: 'Mood Survey'});
+        	//cordova.plugins.notification.local.schedule({icon: 'ic_launcher', id: f, at: date6, text: 'Time for your next Mood Report!', title: 'Mood Survey'}); 
 
             //This part of the code records when the notifications are scheduled for and sends it to the server
         	localStore['notification_' + i + '_1'] = localStore.participant_id + "_" + a + "_" + date1;
         	localStore['notification_' + i + '_2'] = localStore.participant_id + "_" + b + "_" + date2;
         	localStore['notification_' + i + '_3'] = localStore.participant_id + "_" + c + "_" + date3;
         	localStore['notification_' + i + '_4'] = localStore.participant_id + "_" + d + "_" + date4;
-        	localStore['notification_' + i + '_5'] = localStore.participant_id + "_" + e + "_" + date5;
-        	localStore['notification_' + i + '_6'] = localStore.participant_id + "_" + f + "_" + date6;
+        	//localStore['notification_' + i + '_5'] = localStore.participant_id + "_" + e + "_" + date5;
+        	//localStore['notification_' + i + '_6'] = localStore.participant_id + "_" + f + "_" + date6;
         	}
 },
 
@@ -659,12 +698,12 @@ scheduleNotifs:function() {
 //Replace X with the number of seconds you want the app to snooze for (e.g., 10 minutes is 600 seconds)
 //You can also customize the Title of the message, the snooze message that appears in the notification
 snoozeNotif:function() {
-    var now = new Date().getTime(), snoozeDate = new Date(now + 600*1000);
+    var now = new Date().getTime(), snoozeDate = new Date(now + 1200*1000);
     var id = '99';
     cordova.plugins.notification.local.schedule({
                                          icon: 'ic_launcher',
                                          id: id,
-                                         title: 'Diary Survey',
+                                         title: 'Mood Survey',
                                          text: 'Please complete survey now!',
                                          at: snoozeDate,
                                          });

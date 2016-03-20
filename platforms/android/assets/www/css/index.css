@@ -6,7 +6,7 @@ body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    background-color:#002A5C;
+    background-color:#005C04;
     font-family:Helvetica, Arial, sans-serif;
 	text-align:center;
 	font-size:1.0625em;
@@ -17,10 +17,39 @@ body {
 	color: #FFFFFF;
 }
 
+.label-container {
+	-webkit-flex-basis: 100%;
+	display: -webkit-flex;
+	-webkit-flex-wrap: nowrap;
+	-webkit-justify-content: space-between;
+/*	margin-top: 2rem;*/
+    margin-bottom: 2rem;
+}
+
+.label {
+	color: #FFFFFF;
+	font-size: 1rem;
+/*	margin-top: 1rem;*/
+	text-align: center;
+	max-width: 3rem;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.label:nth-of-type(1) {
+    float:left;
+    margin-left: 10%;
+    text-align: left;
+    }
+.label:nth-of-type(2) {
+    float:right;
+    margin-right: 10%;
+    text-align: right;
+    }
+
 button {
 	-webkit-tap-highlight-color: #271100;
     color: #FFFFFF;
-    background-color:#008BB0;
+    background-color:#33B000;
   	font-weight: bold;
   	font-size:1.0625em;
   	padding: 10px 15px;
@@ -37,7 +66,7 @@ textarea {
   	font-size:1.00em;
   	font-weight: bold;
   	border-radius: 1px;
-  	border-color: #008BB0;
+  	border-color: #33B000;
   	border-style: solid;
   	width: 300px;
   	height: 100px;
@@ -64,7 +93,7 @@ input[type=range]::-webkit-slider-thumb {
 	border: none;	
 	height: 20px;
 	width: 20px;
-	background: #008BB0;
+	background: #33B000;
 	border-radius: 50%;
 	margin-top: -4px;
 	cursor: pointer;	
