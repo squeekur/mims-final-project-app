@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.experiencesampler.exampleExperienceSamplerAndroid;
+package edu.berkeley.mimsFinalProjectAndroid;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

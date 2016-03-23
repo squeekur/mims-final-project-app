@@ -20,38 +20,44 @@ var surveyQuestions = [
                                 ],
                        },
                         /*1*/
-                        /*this is what a "mult1" for a regular rating scale with only positive values (including 0) looks like*/                       
                        {
-                       "type":"mult1",
-                       "variableName": "pleasureDimension",
-                       "questionPrompt": "How are you feeling?",
-                       "minResponse": -2,
-                       "maxResponse": 2,
-                       "labels": [
-                                {"label": "Very displeased"},
-                                {"label": "Displeased"},
-                                {"label": "Neutral"},
-                                {"label": "Pleased"},
-                                {"label": "Very pleased"},
-                                ]
+                       "type": "instructions",
+                       "variableName": "generalInstructions",
+                       "questionPrompt": "On the following screens, we will be asking you 5 questions about your mood since we last notified you.",
                        },
                         /*2*/
                         /*this is what a "mult1" for a regular rating scale with only positive values (including 0) looks like*/                       
                        {
                        "type":"mult1",
-                       "variableName": "arousalDimension",
-                       "questionPrompt": "How are you feeling?",
+                       "variableName": "pleasureDimension",
+                       "questionPrompt": "Please indicate how you feel right now.",
                        "minResponse": -2,
                        "maxResponse": 2,
                        "labels": [
-                                {"label": "Very inactive"},
+                                {"label": "Very Displeased"},
+                                {"label": "Displeased"},
+                                {"label": "Neutral"},
+                                {"label": "Pleased"},
+                                {"label": "Very Pleased"},
+                                ]
+                       },
+                        /*3*/
+                        /*this is what a "mult1" for a regular rating scale with only positive values (including 0) looks like*/                       
+                       {
+                       "type":"mult1",
+                       "variableName": "arousalDimension",
+                       "questionPrompt": "Please indicate how you feel right now.",
+                       "minResponse": -2,
+                       "maxResponse": 2,
+                       "labels": [
+                                {"label": "Very Inactive"},
                                 {"label": "Inactive"},
                                 {"label": "Neutral"},
                                 {"label": "Active"},
-                                {"label": "Very active"},
+                                {"label": "Very Active"},
                                 ]
                        },
-                       /*3*/
+                       /*4*/
                        /*a "slider" item using a sliding rating scale. It only needs your question prompt and the minimum and
                        maximum values of your sliding scale. ExperienceSampler will set the default value to be the midpoint*/
                        {
@@ -60,11 +66,11 @@ var surveyQuestions = [
                        "questionPrompt": "How are you feeling?",
                        "minResponse": 0,
                        "maxResponse": 100,
-                       "rightLable": "Very Active",
-                       "leftLable": "Very Inactive",
+                       "rightLable": "Alert",
+                       "leftLable": "Sleepy",
                        
                        },                                            
-                       /*4*/
+                       /*5*/
                        /*a "slider" item using a sliding rating scale. It only needs your question prompt and the minimum and
                        maximum values of your sliding scale. ExperienceSampler will set the default value to be the midpoint*/
                        {
@@ -73,8 +79,21 @@ var surveyQuestions = [
                        "questionPrompt": "How are you feeling?",
                        "minResponse": 0,
                        "maxResponse": 100,
-                       "rightLable": "Very Pleased",
-                       "leftLable": "Very Displeased",
+                       "rightLable": "Positive",
+                       "leftLable": "Negative",
+                       
+                       },
+                       /*5*/
+                       /*a "slider" item using a sliding rating scale. It only needs your question prompt and the minimum and
+                       maximum values of your sliding scale. ExperienceSampler will set the default value to be the midpoint*/
+                       {
+                       "type":"slider",
+                       "variableName": "stressSlider",
+                       "questionPrompt": "Please rate your stress level at this moment?",
+                       "minResponse": 0,
+                       "maxResponse": 100,
+                       "rightLable": "Not Stressed",
+                       "leftLable": "Very Stressed",
                        
                        },
 
@@ -92,11 +111,6 @@ var lastPage = [
                 {
                 "message": "That's cool! I'll notify you again in 20 minutes!"
                 },
-                ///*2*/
-                ///*NOT NEEDED*/
-                //{
-                //"message": "Thank you for installing our app. Please wait while the data is sent to our servers..."
-                //}
                 ];
 
 /*Questions to set up participant notifications so that notifications are customized to participant's schedule*/ 
@@ -448,7 +462,7 @@ recordResponse: function(button, count, type) {
     if (count == 6) {name = response;}
     
     if (count <= -1) {uniqueRecord = currentQuestion;}
-    else {uniqueRecord = uniqueKey + "_" + currentQuestion + "_" + year + "_" + (month-1) + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
+    else {uniqueRecord = uniqueKey + "_" + currentQuestion + "_" + year + "_" + (month+1) + "_" + day + "_" + hours + "_" + minutes + "_" + seconds;}
    
     //Save this to local storage
     localStore[uniqueRecord] = response;
@@ -539,7 +553,7 @@ saveDataLastPage:function() {
             	localStore.participant_id = pid;
            		localStore.snoozed = snoozed;
            		localStore.uniqueKey = uniqueKey;
-           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey</h3>");
+           		$("#question").html("<h3>Your responses have been recorded. Thank you for completing this survey. Please close the application.</h3>");
            },
            error: function (request, error) {console.log(error);
                 $("#question").html("<h3>Please try resending data. If problems persist, please contact the researchers.</h3><br><button>Resend data</button>");
@@ -598,7 +612,7 @@ scheduleNotifs:function() {
  	//Replace X with the number of days in the experience sampling period (e.g., collecting data for 7 days, replace X with 7)
  	//Note that iOS apps can only have 64 unique notifications, so you should keep that in mind if you are collecting data 
  	//for more than longer periods of time
-    for (i = 0; i < 1; i ++) {
+    for (i = 0; i < 14; i ++) {
         //The code below (up to "else { nightlyLag = ...}" is only necessary if you allow the daily data collection period to vary across 
  		//weekdays and weekends
    		var alarmDay = dayOfWeek + 1 + i; 
